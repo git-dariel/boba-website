@@ -11,7 +11,6 @@ import image10 from "../assets/image10.png";
 import image11 from "../assets/image11.png";
 import image12 from "../assets/image12.png";
 import indoorDesign from "../assets/indoor-design.png";
-import logo from "../assets/logo.png";
 import type { HomeContent } from "../types/content";
 
 export const homeContent: HomeContent = {
@@ -265,9 +264,9 @@ export const homeContent: HomeContent = {
     ],
     cards: [
       {
-        image: logo,
-        alt: "Boba Naicha logo",
-        caption: "Boba Naicha brand mark",
+        image: indoorDesign,
+        alt: "Inside the Boba Naicha cafe seating area",
+        caption: "Inside the cafe",
         imagePosition: "center center",
       },
       {
