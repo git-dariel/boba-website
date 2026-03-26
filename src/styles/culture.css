@@ -122,12 +122,16 @@
     padding: 3rem 0;
   }
 
-  .culture-slide {
-    flex: 0 0 72vw;
-    height: 360px;
+  /* Track gets side padding so the next card peeks */
+  .culture-carousel__track {
+    padding: 0 1rem 4px;
   }
 
+  .culture-slide,
+  .culture-slide--feature,
   .culture-slide--tall {
-    height: 400px;
+    flex: 0 0 82%;
+    height: 380px;
+    scroll-snap-align: center;
   }
 }

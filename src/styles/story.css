@@ -159,38 +159,29 @@
   }
 }
 
-@media (max-width: 720px) {
+/* ─── Mobile: replace absolute collage with a clean scroll strip ─────── */
+
+@media (max-width: 680px) {
   .story-panel {
-    padding: 2.5rem 0 3rem;
+    padding: 2.5rem 0 2.8rem;
   }
 
+  /* Stats stay 2-column so they don't take excessive vertical space */
   .story-panel__stats {
     grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
   }
 
+  .story-panel__stat {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .story-panel__actions {
+    margin-top: 1.5rem;
+  }
+
+  /* Hide the image collage entirely on mobile */
   .story-panel__media {
-    min-height: 420px;
-  }
-
-  .story-card--1 {
-    width: 90%;
-    height: 175px;
-  }
-
-  .story-card--2 {
-    top: 145px;
-    width: 54%;
-    height: 165px;
-  }
-
-  .story-card--3 {
-    width: 64%;
-    height: 190px;
-  }
-}
-
-@media (max-width: 480px) {
-  .story-panel__stats {
-    grid-template-columns: 1fr;
+    display: none;
   }
 }

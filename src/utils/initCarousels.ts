@@ -19,8 +19,15 @@ function initSingleCarousel(carousel: HTMLElement) {
   const slides = Array.from(trackEl.children) as HTMLElement[];
   if (!slides.length) return;
 
-  const PAGE_SIZE = 3;
-  const pageCount = Math.max(1, Math.ceil(slides.length / PAGE_SIZE));
+  const getPageSize = () => {
+    const w = window.innerWidth;
+    if (w <= 680) return 1;
+    if (w <= 900) return 2;
+    return 3;
+  };
+
+  let pageSize = getPageSize();
+  let pageCount = Math.max(1, Math.ceil(slides.length / pageSize));
   let currentPage = 0;
   let programmaticScrollUntil = 0;
   let dragging = false;
@@ -31,7 +38,7 @@ function initSingleCarousel(carousel: HTMLElement) {
 
   const getPageOffsets = () =>
     Array.from({ length: pageCount }, (_, pageIndex) => {
-      const firstSlideOfPage = slides[Math.min(pageIndex * PAGE_SIZE, slides.length - 1)];
+      const firstSlideOfPage = slides[Math.min(pageIndex * pageSize, slides.length - 1)];
       const rawOffset = firstSlideOfPage?.offsetLeft ?? 0;
       return Math.min(rawOffset, getMaxScrollLeft());
     });
@@ -56,7 +63,6 @@ function initSingleCarousel(carousel: HTMLElement) {
     syncDots(clamped);
     updatePageButtons();
 
-    // Reconcile after smooth scroll/snap completes
     window.setTimeout(() => {
       const settledPage = findNearestPage();
       syncDots(settledPage);
@@ -80,12 +86,12 @@ function initSingleCarousel(carousel: HTMLElement) {
     return nearestPage;
   }
 
-  // Build dots (page-based, not image-based)
-  if (dotsContainer) {
+  function buildDots() {
+    if (!dotsContainer) return;
     dotsContainer.innerHTML = "";
     Array.from({ length: pageCount }).forEach((_, pageIndex) => {
       const dot = document.createElement("button");
-      dot.className = `carousel-dot${pageIndex === 0 ? " carousel-dot--active" : ""}`;
+      dot.className = `carousel-dot${pageIndex === currentPage ? " carousel-dot--active" : ""}`;
       dot.setAttribute("data-dot", String(pageIndex));
       dot.setAttribute("aria-label", `Go to page ${pageIndex + 1}`);
       dot.addEventListener("click", () => scrollToPage(pageIndex));
@@ -93,8 +99,26 @@ function initSingleCarousel(carousel: HTMLElement) {
     });
   }
 
+  buildDots();
+  updatePageButtons();
+
   prevBtn?.addEventListener("click", () => scrollToPage(currentPage - 1));
   nextBtn?.addEventListener("click", () => scrollToPage(currentPage + 1));
+
+  // Rebuild pages on viewport resize (handles orientation changes)
+  let resizeDebounce: ReturnType<typeof setTimeout>;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeDebounce);
+    resizeDebounce = setTimeout(() => {
+      const newPageSize = getPageSize();
+      if (newPageSize === pageSize) return;
+      pageSize = newPageSize;
+      pageCount = Math.max(1, Math.ceil(slides.length / pageSize));
+      currentPage = 0;
+      buildDots();
+      scrollToPage(0, false);
+    }, 150);
+  });
 
   // Keep dots and buttons in sync while scrolling
   let scrollDebounce: ReturnType<typeof setTimeout>;

@@ -19,7 +19,7 @@ const renderHeroGalleryCard = (item: GalleryItem, index: number) => `
 `;
 
 export const renderHeroSection = (content: HomeContent) => `
-  <section class="hero">
+  <section class="hero" id="home">
     <div class="content-container">
       <span class="hero__eyebrow">${content.hero.eyebrow}</span>
       <h1>${content.hero.title}</h1>

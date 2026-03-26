@@ -1,14 +1,27 @@
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 20;
-  border-bottom: 1px solid rgba(107, 78, 58, 0.1);
-  background: rgba(248, 239, 228, 0.9);
+  z-index: 200;
+  /* No backdrop-filter here — it would trap position:fixed children
+     to the topbar's box instead of the viewport. Use ::before instead. */
+}
+
+/* Frosted-glass background on a pseudo-element so fixed children
+   (the mobile nav overlay) are positioned relative to the viewport. */
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(248, 239, 228, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(107, 78, 58, 0.1);
 }
 
 .topbar__inner {
+  position: relative;
+  z-index: 1; /* above the ::before layer */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,48 +34,18 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
   flex-shrink: 0;
   text-decoration: none;
 }
 
-.brand__mark {
-  display: grid;
-  place-items: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--white);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
+.brand__logo {
+  height: 36px;
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
-.brand__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.05rem;
-}
-
-.brand__text strong {
-  font-family: "Cormorant Garamond", serif;
-  font-size: 1.45rem;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-.brand__text small {
-  color: var(--text-soft);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* ─── Nav ────────────────────────────────────────────────────────────── */
+/* ─── Nav (desktop) ──────────────────────────────────────────────────── */
 
 .topbar__nav {
   display: inline-flex;
@@ -87,55 +70,135 @@
   background: rgba(107, 78, 58, 0.07);
 }
 
-/* active link — handled by scroll or can be set via JS */
 .topbar__nav a.is-active {
   color: var(--accent-strong);
   font-weight: 600;
 }
 
-/* ─── Phone CTA ──────────────────────────────────────────────────────── */
+/* Phone link inside nav — hidden on desktop, shown in mobile overlay */
+.topbar__nav-phone {
+  display: none;
+}
 
-.topbar__cta {
+/* ─── Desktop phone CTA ──────────────────────────────────────────────── */
+
+.topbar__phone {
   flex-shrink: 0;
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────────── */
+/* ─── Hamburger button ───────────────────────────────────────────────── */
+
+.topbar__hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 26px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.topbar__hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transform-origin: center;
+  transition:
+    transform 0.28s ease,
+    opacity 0.2s ease;
+}
+
+/* Animate to × when open */
+.topbar__hamburger.is-open span:first-child {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.topbar__hamburger.is-open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.topbar__hamburger.is-open span:last-child {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ─── Tablet ─────────────────────────────────────────────────────────── */
 
 @media (max-width: 900px) {
-  .topbar__nav {
-    gap: 0;
-  }
-
-  .topbar__nav a {
+  .topbar__nav a:not(.topbar__nav-phone) {
     padding: 0.4rem 0.55rem;
     font-size: 0.85rem;
   }
 }
 
+/* ─── Mobile: hamburger nav overlay ─────────────────────────────────── */
+
 @media (max-width: 680px) {
-  .topbar__inner {
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    padding: 0.75rem 0;
+  /* Hide desktop phone CTA, show hamburger */
+  .topbar__phone {
+    display: none;
   }
 
-  /* brand left, phone right on first row */
-  .brand {
-    order: 1;
+  .topbar__hamburger {
+    display: flex;
   }
 
-  .topbar__inner > a.pill-button {
-    order: 2;
-    margin-left: auto;
-  }
-
-  /* nav fills second row */
+  /* Nav becomes a fullscreen overlay below the topbar */
   .topbar__nav {
-    order: 3;
-    width: 100%;
+    position: fixed;
+    top: var(--topbar-h, 56px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 190; /* below topbar (200) but above all page content */
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: 0;
-    padding: 0.25rem 0 0.1rem;
-    border-top: 1px solid rgba(107, 78, 58, 0.1);
+    gap: 0.25rem;
+    padding: 1.5rem 1.5rem 2rem;
+    background: rgba(248, 239, 228, 0.97);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    overflow-y: auto;
+  }
+
+  .topbar__nav.is-open {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  /* Editorial nav links — sized to fit all 4 on any phone without scrolling */
+  .topbar__nav a:not(.topbar__nav-phone) {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 14px;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 1.65rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+    text-align: center;
+    letter-spacing: -0.02em;
+    transition: background 0.2s ease;
+  }
+
+  .topbar__nav a:not(.topbar__nav-phone):hover {
+    background: rgba(107, 78, 58, 0.08);
+  }
+
+  /* Phone CTA shown at bottom of overlay */
+  .topbar__nav-phone.topbar__nav-phone {
+    display: inline-flex;
+    margin-top: 1rem;
+    color: var(--white);
+    background: var(--accent);
   }
 }

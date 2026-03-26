@@ -14,14 +14,8 @@ export const renderFooter = (content: HomeContent) => `
   <footer class="footer">
     <div class="content-container">
       <div class="footer__brand">
-        <img
-          src="${content.story.cards[0]?.image}"
-          alt="Boba Naicha logo"
-          loading="lazy"
-          decoding="async"
-        />
         <div class="footer__brand-copy">
-          <strong>Boba Naicha</strong>
+          <h2>Boba Naicha</h2>
           <p>
             Milk tea, coffee, and comfort meals in Macalelon, Quezon.
             A neighborhood cafe made for quick stops and slow afternoons.
