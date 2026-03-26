@@ -1,0 +1,76 @@
+/* ─── Scroll-reveal ────────────────────────────────────────────────── */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease;
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Carousel buttons ─────────────────────────────────────────────── */
+
+.carousel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(10px);
+  color: var(--accent);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.carousel-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--white);
+  border-color: transparent;
+  transform: scale(1.1);
+}
+
+.carousel-btn:disabled {
+  opacity: 0.28;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ─── Dots ─────────────────────────────────────────────────────────── */
+
+.carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.carousel-dot {
+  padding: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  background: var(--line-strong);
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    width 0.25s ease;
+}
+
+.carousel-dot--active {
+  background: var(--accent);
+  width: 22px;
+}
